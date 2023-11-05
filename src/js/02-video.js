@@ -11,23 +11,23 @@ const currentTime = Number(localStorage.getItem('videoplayer-current-time'));
 player
   .setCurrentTime(currentTime)
   .then(seconds => {
-    // seconds = фактичний час, до якого перемкнув плеєр
+    // seconds = the actual time that the player seeked to
   })
   .catch(error => {
     switch (error.name) {
       case 'RangeError':
-        // час був менше 0 або більше тривалості відео
+        // the time was less than 0 or greater than the video’s duration
         break;
       default:
-        // сталася якась інша помилка
+        // some other error occurred
         break;
     }
   });
 player
-  .setColor('#45a247')
+  .setColor('#f01428')
   .then(color => {
-    // встановлений колір
+    // the color that was set
   })
   .catch(error => {
-    // сталася помилка під час встановлення кольору
+    // an error occurred setting the color
   });

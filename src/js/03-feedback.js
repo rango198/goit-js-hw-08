@@ -1,47 +1,41 @@
 import throttle from 'lodash.throttle';
+import { saveToLS, loadFromLS } from './helpers';
 
-const form = document.querySelector('.feedback-form');
-const emailInput = document.querySelector('input[name="email"]');
-const messageInput = document.querySelector('textarea[name="message"]');
+const refs = {
+  formEL: document.querySelector('.feedback-form'),
+  emailInput: document.querySelector('input[name="email"]'),
+  messageInput: document.querySelector('textarea[name="message"]'),
+};
 
-// Функція, яка зберігає стан форми в локальне сховище з використанням throttle
-const saveFormState = throttle(function () {
-  const formState = {
-    email: emailInput.value.trim(),
-    message: messageInput.value.trim(),
+refs.formEL.addEventListener('input', throttle(saveFormState, 500));
+refs.formEL.addEventListener('submit', submitForm);
+
+function saveFormState() {
+  const formStateSave = {
+    email: refs.emailInput.value.trim(),
+    message: refs.messageInput.value.trim(),
   };
-  localStorage.setItem('feedback-form-state', JSON.stringify(formState));
-}, 500);
+  saveToLS('feedback-form-state', formStateSave);
+}
 
-// Додати слухачі подій input на поля форми для збереження стану форми
-emailInput.addEventListener('input', saveFormState);
-messageInput.addEventListener('input', saveFormState);
-
-// Функція для завантаження стану форми з локального сховища
-function load() {
-  const formState = JSON.parse(localStorage.getItem('feedback-form-state'));
-  if (formState) {
-    emailInput.value = formState.email;
-    messageInput.value = formState.message;
+function onLoad() {
+  const formStateLoad = loadFromLS('feedback-form-state');
+  if (formStateLoad) {
+    refs.emailInput.value = formStateLoad.email;
+    refs.messageInput.value = formStateLoad.message;
   }
 }
 
-// Додати слухач події submit на форму
-form.addEventListener('submit', submitForm);
-
-// Функція для обробки сабміту форми
 function submitForm(event) {
   event.preventDefault();
-  const formState = {
-    email: emailInput.value.trim(),
-    message: messageInput.value.trim(),
+  const dataForm = {
+    email: refs.emailInput.value.trim(),
+    message: refs.messageInput.value.trim(),
   };
-  console.log(formState);
+  console.log(dataForm);
   localStorage.removeItem('feedback-form-state');
-  emailInput.value = '';
-  messageInput.value = '';
+  refs.emailInput.value = '';
+  refs.messageInput.value = '';
 }
 
-
-// Завантажити стан форми при завантаженні сторінки
-load();
+onLoad();
